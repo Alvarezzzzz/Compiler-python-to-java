@@ -1,0 +1,190 @@
+*{
+    box-sizing: border-box;
+}
+
+body {
+    --backgrodund-color-main: #fff;
+    --backgrodund-color-secondary: #f5f5f5;
+    --color-text-main: #444;
+    --color-text-secondary: #fff;
+    --background-color-header: #363636;
+    --color-border: #ccc;
+    --color-button-execute: #06c3a7;
+    margin: 0;
+    padding: 0;
+    font-family: Arial;
+    background-color: var(--backgrodund-color-main);
+    color: var(--color-text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header{
+    background-color: var(--background-color-header);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+    padding: 5px 20px;
+}
+
+.header__logo-container{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header__logo{
+    width: clamp(40px, 6vw, 50px);
+}
+
+.header__title{
+    color: var(--color-text-secondary);
+    font-size: calc(1.25rem + 0.5vw);
+}
+
+.header__menu-icon{
+    width: clamp(40px, 6vw, 50px);
+}
+
+.main{
+    flex-grow: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.main__options{
+    display: flex;
+    justify-content: space-between;
+}
+.main__container-language{
+    display: flex;
+    align-items: center;
+    gap: 7.5px;
+    padding: 0 10px;
+    border: solid 1px var(--color-border);
+    border-radius: 5px;
+    height: 2.5rem;
+}
+
+.main__language-icon{
+    width: 1.75rem;
+}
+
+.main__language{
+    color: var(--color-text-main);
+    font-size: min(calc(0.75rem + 0.5vw), 17.5px);
+    font-weight: 100;
+}
+
+.main__container-buttons{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    height: 2.5rem;
+}
+
+.main__button{
+    color: var(--color-text-secondary);
+    height: 2.5rem;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.button-execute{
+    background-color: var(--color-button-execute);
+}
+.button-limpiar{
+    background-color: #2962ff;
+}
+
+.main__button-icon{
+    width: 2rem;
+}
+
+.icon-limpiar{
+    width: 1.25rem;
+    margin-right: 7.5px;
+}
+
+.main__container {
+    flex-grow: 1;
+    display: flex;
+    gap: 10px;
+}
+
+.main__editor, .main__result {
+    width: 50%; /* Comienza ocupando la mitad del contenedor */
+    flex-grow: 1;
+
+}
+
+
+
+.main__editor-textarea{
+    border: none;
+    resize: none;
+    border: solid 1px var(--color-border);
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    font-family: 'Courier New', Courier, monospace; /* Fuente de código */;
+    padding: 5px;
+    overflow: auto;
+}
+
+.main__editor-textarea:focus{
+    outline: none;
+}
+
+.main__result{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: solid 1px var(--color-border);
+    border-radius: 5px;
+    padding: 5px;
+    gap: 15px;
+    position: relative;
+    resize: horizontal; /* Hace que el elemento sea redimensionable en el eje horizontal */
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+/* Estilos para bordes redimencionables */
+.resize-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 5px; /* Grosor del área de redimensionamiento */
+    background: transparent;
+    cursor: ew-resize; /* Cursor de redimensionamiento */
+}
+
+.resize-handle.left {
+    left: -2px;
+}
+
+.resize-handle.right {
+    right: -2px;
+}
+
+.main__result-title{
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    font-weight: bold;
+}
+
+.main__result-container{
+    flex-grow: 1;
+    background-color: var(--backgrodund-color-secondary);
+    border-radius: 7.5px;
+    overflow: auto;
+    font-family: 'Courier New', Courier, monospace; /* Fuente de código */;
+    white-space: pre-wrap; /* Muestra el texto tal como se escribe, con saltos de linea */
+    
+}

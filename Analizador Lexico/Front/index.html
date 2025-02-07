@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo-container">
+            <img src="logo.png" alt="Logo" class="header__logo">
+            <span class="header__title">Lexer</span></span>
+        </div>
+        <div class="header__menu">
+            <img src="menu.png" alt="menu" class="header__menu-icon">
+        </div>
+    </header>
+    <main class="main">
+        <div class="main__options">
+            <div class="main__container-language">
+                <img src="java.png" alt="" class="main__language-icon">
+                <span class="main__language">Java</span>
+            </div>
+            <div class="main__container-buttons">
+                <div class="main__button button-execute" role="button" id="execute" onclick="sendDataToPython()"">
+                    <img src="execute.png" alt="" class="main__button-icon">
+                    Ejecutar
+                </div>
+                <div class="main__button button-limpiar" role="button" id="limpiar">
+                    <img src="clean.png" alt="" class="main__button-icon icon-limpiar">
+                    Limpiar
+                </div>
+            </div>
+        </div>
+        <div class="main__container">
+            <div class="main__editor">
+
+                    <textarea class="main__editor-textarea" placeholder="Escribe tu codigo aqui"></textarea>
+
+                
+            </div>
+            <div class="main__result" id="resizable">
+                <div class="resize-handle left"></div>
+                <div class="resize-handle right"></div>
+                <div class="main__result-title">Resultados</div>
+                <div class="main__result-container">
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
