@@ -99,8 +99,16 @@ body {
 .button-execute{
     background-color: var(--color-button-execute);
 }
+.button-execute:hover{
+    background-color: #00a38c;
+    cursor: pointer;
+}
 .button-limpiar{
     background-color: #2962ff;
+}
+.button-limpiar:hover{
+    background-color: #0039cb;
+    cursor: pointer;
 }
 
 .main__button-icon{
@@ -132,7 +140,7 @@ body {
     border: solid 1px var(--color-border);
     border-radius: 5px;
     width: 100%;
-    height: 100%;
+    height: 90%;
     font-family: 'Courier New', Courier, monospace; /* Fuente de código */;
     padding: 5px;
     overflow: auto;
@@ -154,6 +162,19 @@ body {
     resize: horizontal; /* Hace que el elemento sea redimensionable en el eje horizontal */
     flex-shrink: 0;
     flex-grow: 0;
+}
+
+.input__file{
+    height: 2.5rem;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    border: solid 1px var(--color-border);
+}
+.input__file:hover{
+    background-color: var(--backgrodund-color-secondary);
+    cursor: pointer;
 }
 
 /* Estilos para bordes redimencionables */
