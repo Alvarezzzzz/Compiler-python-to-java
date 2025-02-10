@@ -13,22 +13,23 @@
             <img src="logo.png" alt="Logo" class="header__logo">
             <span class="header__title">Lexer</span></span>
         </div>
-        <div class="header__menu">
-            <img src="menu.png" alt="menu" class="header__menu-icon">
-        </div>
+       
     </header>
     <main class="main">
         <div class="main__options">
             <div class="main__container-language">
+                <img src="python-logo.png" alt="" class="main__language-icon">
+                <span class="main__language">Python</span>
+                <p>a</p>
                 <img src="java.png" alt="" class="main__language-icon">
                 <span class="main__language">Java</span>
             </div>
             <div class="main__container-buttons">
-                <div class="main__button button-execute" role="button" id="execute" onclick="sendDataToPython()"">
+                <div class="main__button button-execute" role="button" id="execute" onclick="sendDataToPython()">
                     <img src="execute.png" alt="" class="main__button-icon">
                     Ejecutar
                 </div>
-                <div class="main__button button-limpiar" role="button" id="limpiar">
+                <div class="main__button button-limpiar" role="button" id="limpiar" onclick="clearEditor()">
                     <img src="clean.png" alt="" class="main__button-icon icon-limpiar">
                     Limpiar
                 </div>
@@ -37,8 +38,8 @@
         <div class="main__container">
             <div class="main__editor">
 
-                    <textarea class="main__editor-textarea" placeholder="Escribe tu codigo aqui"></textarea>
-
+                    <textarea class="main__editor-textarea" placeholder="Escribe tu codigo aqui o adjunta tu archivo"></textarea>
+                    <input class="input__file" type="file" id="fileInput" accept=".py" onchange="handleFileUpload(event)">
                 
             </div>
             <div class="main__result" id="resizable">
