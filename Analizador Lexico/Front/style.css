@@ -209,3 +209,48 @@ body {
     white-space: pre-wrap; /* Muestra el texto tal como se escribe, con saltos de linea */
     
 }
+
+/*footer letra*/
+
+.footer__text{
+    color:#fff;
+    font-size: 1rem;
+}
+
+
+/* Estilos para la ventana modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Fijo en la pantalla */
+    z-index: 1; /* Por encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Alto completo */
+    overflow: auto; /* Habilitar scroll si es necesario */
+    background-color: rgb(0,0,0); /* Color de fondo */
+    background-color: rgba(0,0,0,0.4); /* Fondo con opacidad */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    border-radius: 10px;
+    margin: 10% auto; /* Centrado vertical y horizontal */
+    padding: 20px 50px;
+    border: 1px solid #888;
+    width: 80%; /* Ancho de la ventana modal */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

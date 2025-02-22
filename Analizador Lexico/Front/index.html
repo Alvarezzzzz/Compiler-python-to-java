@@ -18,11 +18,19 @@
     <main class="main">
         <div class="main__options">
             <div class="main__container-language">
-                <img src="python-logo.png" alt="" class="main__language-icon">
-                <span class="main__language">Python</span>
-                <p>a</p>
                 <img src="java.png" alt="" class="main__language-icon">
                 <span class="main__language">Java</span>
+                <p>a</p>
+                <img src="python-logo.png" alt="" class="main__language-icon">
+                <span class="main__language">Python</span>
+            </div>
+            <div>
+                <select class="main__container-language" style="cursor: pointer;">
+                    <option value="analisis_lexico">Analisis Lexico</option>
+                    <option value="analisis_sintactico">Analisis Sintactico</option>
+                    <option value="analisis_semanticco">Analisis Semantico</option>
+                    <option value="compilador">Compilador</option>
+                </select>
             </div>
             <div class="main__container-buttons">
                 <div class="main__button button-execute" role="button" id="execute" onclick="sendDataToPython()">
@@ -51,7 +59,45 @@
             </div>
         </div>
     </main>
+    <footer class="header">
+        <div class="footer__container">
+            <span class="footer__text">Alejandro Alvarez; 31.629.822</span>
+            <span class="footer__text"> | </span>
+            <span class="footer__text">Lai Chang; 30.335.078</span>
+        </div>
+    </footer>
+    <!-- Ventana Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h4>Bienvenido Lexer</h4>
+            <p>El objetivo de este compilador es tomar código fuente Java como entrada y producir código 
+                fuente Python equivalente como salida. Esto implica analizar la estructura y el significado 
+                del código Java y luego generar código Python que reproduzca la misma funcionalidad.
+            </p>
+            <p>Fases</p>
+            <ul>
+                <li><strong>Análisis Léxico (Lexer):</strong> Divide el código fuente en tokens.</li>
+                <li><strong>Análisis Sintáctico (Parser):</strong> Construye el árbol de sintaxis abstracta (AST).</li>
+                <li><strong>Análisis Semántico:</strong> Verifica la coherencia y las reglas del lenguaje.</li>
+                <li><strong>Generación de Código Intermedio (Opcional):</strong> Transforma el AST en una representación intermedia.</li>
+                <li><strong>Generación de Código Python:</strong> Genera el código Python equivalente.</li>
+            </ul>
+        </div>
+    </div>
+
     <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Mostrar la ventana modal al cargar la página
+        window.onload = function() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        // Función para cerrar la ventana modal
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
