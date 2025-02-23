@@ -73,7 +73,7 @@ def t_COMENTARIO(t):
 # Manejo de errores léxicos
 def t_error(t):
     global errores
-    errores += f"Expresion Invalida '{t.value[0]}' en la posicion: ({t.lineno},{t.lexpos})" + "\n"
+    errores += f"Expresion Invalida \"{t.value}\" en la posicion: ({t.lineno},{t.lexpos})" + "\n"
     t.lexer.skip(1)
 
 # Manejo de saltos de linea para actualizar el contador de linea
@@ -81,14 +81,17 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-# Construir el analizador léxico
-lexer = lex.lex()
+
 
 # Función para probar el analizador
 def test_lexer(data):
+    # Construir el analizador léxico
+    lexer = lex.lex()
     lexer.input(data)
     global mensaje
+    global errores
     mensaje = ""
+    errores = ""
 
     mensaje += f"{'Tipo de Token':<27} {'Valores':<15} {'  Posiciones':>5}\n"
 
@@ -100,7 +103,7 @@ def test_lexer(data):
         mensaje += f"Token: {tok.type:<20} Valor: {tok.value:<10} Posición: ({tok.lineno:>2}, {tok.lexpos:>3})\n"
 
     if errores:
-        mensaje += "\nExpresiones Invalidas:"
+        mensaje += f"\nExpresiones Invalidas:\n{errores}" 
     else:
         mensaje += "\nNo se Encontraron Expresiones Invalidas."
     return mensaje

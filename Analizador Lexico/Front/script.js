@@ -12,19 +12,13 @@ function handleFileUpload(event) {
         reader.onload = function(e) {
             const content = e.target.result;
             document.querySelector('.main__editor-textarea').value = content;
-            sendFileToPython(file.name, content);
+            //sendFileToPython(file.name, content);
         };
         reader.readAsText(file);
     }
 }
 
-function sendFileToPython(filename, content) {
-    if (window.pyqt) {
-        window.pyqt.sendData(JSON.stringify({ filename: filename, content: content }));
-    } else {
-        console.error("PyQt bridge is not available.");
-    }
-}
+
 
 function sendDataToPython() {
     const content = document.querySelector('.main__editor-textarea').value;
@@ -40,15 +34,7 @@ function clearEditor() {
     document.querySelector('.main__result-container').innerHTML = '';
 }
 
-function processResult(result) {
-    // Reemplazar 'noseN' con 'N' espacios
-    result = result.replace(/nose(\d+)/g, (match, p1) => ' '.repeat(Number(p1)));
-    
-    // Reemplazar 'noseSalto' con un salto de línea
-    result = result.replace(/noseSalto/g, '\n');
-    
-    return result;
-}
+
 
 function handlePythonData(data) {
     // Recibir los datos procesados por Python y mostrarlo en la interfaz

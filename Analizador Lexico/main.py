@@ -17,8 +17,8 @@ class MyApp(QMainWindow):
         self.browser.setGeometry(0, 0, self.width(), self.height())  # Ajustar automáticamente
 
         # Cargamos el archivo HTML con la ruta correcta
-        #self.browser.setUrl(QUrl("file:///D:/Repo%20Compilador/Trasnspiler-python-to-java/Analizador%20Lexico/Front/index.html"))
-        self.browser.setUrl(QUrl.fromLocalFile("c:/Users/yourb/OneDrive/Desktop/traductoresinterpretes/Trasnspiler-python-to-java/Analizador Lexico/Front/index.html"))
+        self.browser.setUrl(QUrl("file:///D:/Repo%20Compilador/Trasnspiler-python-to-java/Analizador%20Lexico/Front/index.html"))
+        #self.browser.setUrl(QUrl.fromLocalFile("c:/Users/yourb/OneDrive/Desktop/traductoresinterpretes/Trasnspiler-python-to-java/Analizador Lexico/Front/index.html"))
 
         
         # Configurar QWebChannel
@@ -35,6 +35,7 @@ class MyApp(QMainWindow):
     def on_receive_data(self, data):
         print(f"Data received from JS: \n{data}")
         # Realizamos alguna operación en Python (por ejemplo, procesar la cadena recibida)
+
         result = lexer.test_lexer(data)
         return result
 
@@ -50,9 +51,11 @@ class PyQtBridge(QObject):
     @pyqtSlot(str)
     def sendData(self, data):
         result = self.parent().on_receive_data(data)
+        print("Aqui el resultado del lexer")
         print(result)
 
         safe_result = json.dumps(result)  # Escapa la cadena para evitar problemas con caracteres especiales
+        print("Aqui el resultado del lexer con formato de js")
         print(safe_result)
 
         # Enviar datos procesados de vuelta a JS
