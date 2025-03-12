@@ -18,6 +18,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    max-height: 100vh;
 }
 
 .header{
@@ -207,7 +208,8 @@ body {
     overflow: auto;
     font-family: 'Courier New', Courier, monospace; /* Fuente de código */;
     white-space: pre-wrap; /* Muestra el texto tal como se escribe, con saltos de linea */
-    
+    padding: 1rem;  
+    height: 100%;  
 }
 
 /*footer letra*/

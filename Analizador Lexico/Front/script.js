@@ -6,17 +6,18 @@ new QWebChannel(qt.webChannelTransport, function(channel) {
 });
 
 function handleFileUpload(event) {
-    const file = event.target.files[0];
+    const file = event.target.files[0]; // Obtiene el primer archivo seleccionado
     if (file) {
-        const reader = new FileReader();
+        const reader = new FileReader(); // Crea un lector de archivos
         reader.onload = function(e) {
-            const content = e.target.result;
-            document.querySelector('.main__editor-textarea').value = content;
-            //sendFileToPython(file.name, content);
+            const content = e.target.result; // Obtiene el contenido del archivo
+            document.querySelector('.main__editor-textarea').value = content; // Lo coloca en el textarea
+            event.target.value = ""; // Reinicia la lista de archivos
         };
-        reader.readAsText(file);
+        reader.readAsText(file); // Lee el archivo como texto
     }
 }
+
 
 
 
