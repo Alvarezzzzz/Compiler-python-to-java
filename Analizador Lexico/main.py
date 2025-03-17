@@ -17,8 +17,8 @@ class MyApp(QMainWindow):
         self.browser.setGeometry(0, 0, self.width(), self.height())  # Ajustar automáticamente
 
         # Cargamos el archivo HTML con la ruta correcta
-        self.browser.setUrl(QUrl("file:///D:/Repo%20Compilador/Trasnspiler-python-to-java/Analizador%20Lexico/Front/index.html"))
-        #self.browser.setUrl(QUrl.fromLocalFile("c:/Users/yourb/OneDrive/Desktop/traductoresinterpretes/Trasnspiler-python-to-java/Analizador Lexico/Front/index.html"))
+        #self.browser.setUrl(QUrl("file:///D:/Repo%20Compilador/Trasnspiler-python-to-java/Analizador%20Lexico/Front/index.html"))
+        self.browser.setUrl(QUrl.fromLocalFile("c:/Users/yourb/OneDrive/Desktop/traductoresinterpretes/Trasnspiler-python-to-java/Analizador Lexico/Front/index.html"))
 
         
         # Configurar QWebChannel

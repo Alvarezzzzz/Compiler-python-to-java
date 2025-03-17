@@ -323,77 +323,77 @@ def test_parser(data):
     else:
         return "Análisis sintáctico exitoso\nAST generado:\n" + ast_to_str(result)
 
-def ast_to_str(node, indent=0):
+def ast_to_str(node, indent=0, is_last=True, prefix=''):
     result = ""
     if isinstance(node, Program):
-        result += "Programa:\n"
-        for stmt in node.statements:
-            result += ast_to_str(stmt, indent + 2)
+        result += ' ' * indent + prefix + "Programa\n"
+        for i, stmt in enumerate(node.statements):
+            result += ast_to_str(stmt, indent + 4, i == len(node.statements) - 1, "├── ")
     elif isinstance(node, BinOp):
-        result += ' ' * indent + f"BinOp({node.op})\n"
-        result += ast_to_str(node.left, indent + 4)
-        result += ast_to_str(node.right, indent + 4)
+        result += ' ' * indent + prefix + f"BinOp({node.op})\n"
+        result += ast_to_str(node.left, indent + 4, False, "├── ")
+        result += ast_to_str(node.right, indent + 4, True, "└── ")
     elif isinstance(node, UnaryOp):
-        result += ' ' * indent + f"UnaryOp({node.op})\n"
-        result += ast_to_str(node.expr, indent + 4)
+        result += ' ' * indent + prefix + f"UnaryOp({node.op})\n"
+        result += ast_to_str(node.expr, indent + 4, True, "└── ")
     elif isinstance(node, VariableDeclaration):
-        result += ' ' * indent + f"Declaración: {node.var_type} {node.name.name}\n"
-        result += ast_to_str(node.value, indent + 4)
+        result += ' ' * indent + prefix + f"Declaración: {node.var_type} {node.name.name}\n"
+        result += ast_to_str(node.value, indent + 4, True, "└── ")
     elif isinstance(node, Assignment):
-        result += ' ' * indent + f"Asignación: {node.name.name}\n"
-        result += ast_to_str(node.value, indent + 4)
+        result += ' ' * indent + prefix + f"Asignación: {node.name.name}\n"
+        result += ast_to_str(node.value, indent + 4, True, "└── ")
     elif isinstance(node, Literal):
-        result += ' ' * indent + f"Literal({node.type}): {node.value}\n"
+        result += ' ' * indent + prefix + f"Literal({node.type}): {node.value}\n"
     elif isinstance(node, Identifier):
-        result += ' ' * indent + f"Identificador: {node.name}\n"
+        result += ' ' * indent + prefix + f"Identificador: {node.name}\n"
     elif isinstance(node, Increment):
-        result += ' ' * indent + f"Incremento {'pre' if node.is_pre else 'post'}fijo: {node.identifier.name}\n"
+        result += ' ' * indent + prefix + f"Incremento {'pre' if node.is_pre else 'post'}fijo: {node.identifier.name}\n"
     elif isinstance(node, Decrement):
-        result += ' ' * indent + f"Decremento {'pre' if node.is_pre else 'post'}fijo: {node.identifier.name}\n"
+        result += ' ' * indent + prefix + f"Decremento {'pre' if node.is_pre else 'post'}fijo: {node.identifier.name}\n"
     elif isinstance(node, Print):
-        result += ' ' * indent + "Print:\n"
-        result += ast_to_str(node.value, indent + 4)
+        result += ' ' * indent + prefix + "Print\n"
+        result += ast_to_str(node.value, indent + 4, True, "└── ")
     elif isinstance(node, IfStatement):
-        result += ' ' * indent + "IfStatement:\n"
-        result += ' ' * (indent + 2) + "Condición:\n"
-        result += ast_to_str(node.condition, indent + 4)
-        result += ' ' * (indent + 2) + "Then:\n"
-        result += ast_to_str(node.then_block, indent + 4)
+        result += ' ' * indent + prefix + "IfStatement\n"
+        result += ' ' * (indent + 4) + "├── Condición\n"
+        result += ast_to_str(node.condition, indent + 8, False, "│   └── ")
+        result += ' ' * (indent + 4) + "├── Then\n"
+        result += ast_to_str(node.then_block, indent + 8, node.else_block is None, "│   └── ")
         if node.else_block:
-            result += ' ' * (indent + 2) + "Else:\n"
-            result += ast_to_str(node.else_block, indent + 4)
+            result += ' ' * (indent + 4) + "└── Else\n"
+            result += ast_to_str(node.else_block, indent + 8, True, "    └── ")
     elif isinstance(node, ForStatement):
-        result += ' ' * indent + "ForStatement:\n"
-        result += ' ' * (indent + 2) + "ForArgument:\n"
-        result += ' ' * (indent + 4) + f"Iterador: {node.iterator} , type: {node.type} \n"
-        result += ' ' * (indent + 4) + f"Iterable: {node.iterable}\n"
-        result += ' ' * (indent + 2) + "ForBlock:\n"
-        result += ast_to_str(node.block, indent + 4)
+        result += ' ' * indent + prefix + "ForStatement\n"
+        result += ' ' * (indent + 4) + "├── ForArgument\n"
+        result += ' ' * (indent + 8) + f"├── Iterador: {node.iterator}\n"
+        result += ' ' * (indent + 8) + f"├── Tipo: {node.type}\n"
+        result += ' ' * (indent + 8) + f"└── Iterable: {node.iterable}\n"
+        result += ' ' * (indent + 4) + "└── ForBlock\n"
+        result += ast_to_str(node.block, indent + 8, True, "    └── ")
     elif isinstance(node, WhileStatement):
-        result += ' ' * indent + "WhileStatement:\n"
-        result += ' ' * (indent + 2) + "Condición:\n"
-        result += ast_to_str(node.condition, indent + 4)
-        result += ' ' * (indent + 2) + "Then:\n"
-        result += ast_to_str(node.block, indent + 4)
+        result += ' ' * indent + prefix + "WhileStatement\n"
+        result += ' ' * (indent + 4) + "├── Condición\n"
+        result += ast_to_str(node.condition, indent + 8, False, "│   └── ")
+        result += ' ' * (indent + 4) + "└── Then\n"
+        result += ast_to_str(node.block, indent + 8, True, "    └── ")
     elif isinstance(node, ReturnStatement):
-        result += ' ' * indent + "ReturnStatement:\n"
-        result += ' ' * (indent + 2) + "Valor:\n"
-        result += ast_to_str(node.value, indent + 4)
+        result += ' ' * indent + prefix + "ReturnStatement\n"
+        result += ast_to_str(node.value, indent + 4, True, "└── ")
     elif isinstance(node, FunctionDeclaration):
-        result += ' ' * indent + f"FunctionDeclaration:\n"
-        result += ' ' * (indent + 2) + f"Modificador: {node.modificador_acceso or 'Ninguno'}\n"
-        result += ' ' * (indent + 2) + f"Static: {'Sí' if node.static else 'No'}\n"
-        result += ' ' * (indent + 2) + f"Tipo Retorno: {node.tipo_retorno}\n"
-        result += ' ' * (indent + 2) + f"Nombre: {node.nombre}\n"
-        result += ' ' * (indent + 2) + "Parámetros:\n"
+        result += ' ' * indent + prefix + "FunctionDeclaration\n"
+        result += ' ' * (indent + 4) + f"├── Modificador: {node.modificador_acceso or 'Ninguno'}\n"
+        result += ' ' * (indent + 4) + f"├── Static: {'Sí' if node.static else 'No'}\n"
+        result += ' ' * (indent + 4) + f"├── Tipo Retorno: {node.tipo_retorno}\n"
+        result += ' ' * (indent + 4) + f"├── Nombre: {node.nombre}\n"
+        result += ' ' * (indent + 4) + "├── Parámetros\n"
         for tipo, nombre in node.parametros:
-            result += ' ' * (indent + 4) + f"{tipo} {nombre}\n"
-        result += ' ' * (indent + 2) + "Cuerpo:\n"
-        result += ast_to_str(node.cuerpo, indent + 4)
+            result += ' ' * (indent + 8) + f"├── {tipo} {nombre}\n"
+        result += ' ' * (indent + 4) + "└── Cuerpo\n"
+        result += ast_to_str(node.cuerpo, indent + 8, True, "    └── ")
     elif isinstance(node, Block):
-        result += ' ' * indent + "Block:\n"
-        for stmt in node.statements:
-            result += ast_to_str(stmt, indent + 2)
+        result += ' ' * indent + prefix + "Block\n"
+        for i, stmt in enumerate(node.statements):
+            result += ast_to_str(stmt, indent + 4, i == len(node.statements) - 1, "└── ")
     return result
 
 # Prueba
