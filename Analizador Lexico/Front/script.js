@@ -22,10 +22,15 @@ function handleFileUpload(event) {
 
 
 function sendDataToPython() {
+    const opcion = document.getElementById('opcion').value; //Se obtiene la opcion del usuario
+
     const content = document.querySelector('.main__editor-textarea').value;
-    if (window.pyqt) {
+    if (window.pyqt && opcion == 'analisis_lexico') {
         window.pyqt.sendData(content);
-    } else {
+    } else if (window.pyqt && opcion == 'analisis_sintactico') {
+        window.pyqt.sendDataSintactico(content);
+    }
+    else {
         console.error("PyQt bridge is not available.");
     }
 }
@@ -40,6 +45,16 @@ function clearEditor() {
 function handlePythonData(data) {
     // Recibir los datos procesados por Python y mostrarlo en la interfaz
     document.getElementsByClassName('main__result-container')[0].innerHTML = data.slice(1, -1);
+}
+
+/* Funcion que convierte los < y > en &lt; y &gt; */
+function convertToHTML(data) {
+    return data.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function handlePythonDataSintactico(data) {
+    // Recibir los datos procesados por Python y mostrarlo en la interfaz
+    document.getElementsByClassName('main__result-container')[0].innerHTML = convertToHTML(data).slice(1, -1);
 }
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -340,116 +340,192 @@ def test_parser(data):
     else:
         return "Análisis sintáctico exitoso\nAST generado:\n" + ast_to_str(result)
 
-def ast_to_str(node, indent=0, is_last=True, prefix=''):
+def ast_to_str(node, indent=0):
     result = ""
+    
+    def line(text, level):
+        return " " * level + "└── " + text + "\n"
+    
     if isinstance(node, Program):
-        result += ' ' * indent + prefix + "<Programa>\n"
-        for i, stmt in enumerate(node.statements):
-            result += ast_to_str(stmt, indent + 4, i == len(node.statements) - 1, "├── ")
+        # Regla: program : lineas
+        result += line("<program>", indent)
+        for stmt in node.statements:
+            result += ast_to_str(stmt, indent + 4)
+        return result
+
     elif isinstance(node, VariableDeclaration):
-        result += ' ' * indent + prefix + "<declaracion>\n"
-        result += ' ' * (indent + 4) + "└── " + str(node.var_type) + "\n"
-        result += ' ' * (indent + 4) + "└── " + node.name.name + "\n"
-        result += ' ' * (indent + 4) + "└── =" + "\n"
-        result += ' ' * (indent + 4) + "└── <expresion>\n"
-        result += ast_to_str(node.value, indent + 4, True, "    └── ")
-        result += ' ' * (indent + 4) + "└── ;\n"
+        # Regla: declaracion : TIPO_DATO IDENTIFICADOR IGUAL expresion PUNTOYCOMA
+        result += line("<declaracion>", indent)
+        result += line(str(node.var_type), indent + 4)           # TIPO_DATO (terminal)
+        result += line(node.name.name, indent + 4)                # IDENTIFICADOR (terminal)
+        result += line("=", indent + 4)                           # Terminal "="
+        result += line("<expresion>", indent + 4)                 # Nodo no terminal: expresion
+        result += ast_to_str(node.value, indent + 8)
+        result += line(";", indent + 4)                           # Terminal ";" 
+        return result
+
+    elif isinstance(node, Assignment):
+        # Regla: sentencia : IDENTIFICADOR IGUAL expresion PUNTOYCOMA
+        result += line("<asignacion>", indent)
+        result += line(node.name.name, indent + 4)                # IDENTIFICADOR
+        result += line("=", indent + 4)
+        result += line("<expresion>", indent + 4)
+        result += ast_to_str(node.value, indent + 8)
+        result += line(";", indent + 4)
+        return result
+
+    elif isinstance(node, IfStatement):
+        # Regla aproximada: sentencia_if : IF IPARENTESIS expresion DPARENTESIS sentencia_block [ELSE sentencia_block]
+        result += line("<sentencia_if>", indent)
+        result += line("IF", indent + 4)
+        result += line("(", indent + 4)
+        result += line("<expresion>", indent + 4)
+        result += ast_to_str(node.condition, indent + 8)
+        result += line(")", indent + 4)
+        # Imprime directamente el nodo Block en lugar de "<sentencia_block>"
+        result += ast_to_str(node.then_block, indent + 4)
+        if node.else_block:
+            result += line("ELSE", indent + 4)
+            result += ast_to_str(node.else_block, indent + 4)
+        return result
+
+    elif isinstance(node, ForStatement):
+        # Regla: sentencia_for : FOR IPARENTESIS TIPO_DATO IDENTIFICADOR DOSPUNTOS IDENTIFICADOR DPARENTESIS sentencia_block
+        result += line("<sentencia_for>", indent)
+        result += line("FOR", indent + 4)
+        result += line("(", indent + 4)
+        result += line(node.type, indent + 4)                   # TIPO_DATO
+        result += line(node.iterator, indent + 4)               # IDENTIFICADOR
+        result += line(":", indent + 4)
+        result += line(node.iterable, indent + 4)               # IDENTIFICADOR (iterable)
+        result += line(")", indent + 4)
+        # Imprime directamente el bloque
+        result += ast_to_str(node.block, indent + 4)
+        return result
+
+    elif isinstance(node, WhileStatement):
+        # Regla: sentencia_while : WHILE IPARENTESIS expresion DPARENTESIS sentencia_block
+        result += line("<sentencia_while>", indent)
+        result += line("WHILE", indent + 4)
+        result += line("(", indent + 4)
+        result += line("<expresion>", indent + 4)
+        result += ast_to_str(node.condition, indent + 8)
+        result += line(")", indent + 4)
+        # Imprime directamente el bloque
+        result += ast_to_str(node.block, indent + 4)
+        return result
+
+    elif isinstance(node, ReturnStatement):
+        # Regla: return : RETURN expresion PUNTOYCOMA
+        result += line("<return>", indent)
+        result += line("return", indent + 4)
+        result += line("<expresion>", indent + 4)
+        result += ast_to_str(node.value, indent + 8)
+        result += line(";", indent + 4)
+        return result
+
+    elif isinstance(node, FunctionDeclaration):
+        # Regla: sentencia_funcion_declaracion : modificador_acceso static tipo_dato IDENTIFICADOR IPARENTESIS parametros DPARENTESIS sentencia_block
+        result += line("<sentencia_funcion_declaracion>", indent)
+        if node.modificador_acceso:
+            result += line(node.modificador_acceso, indent + 4)
+        if node.static:
+            result += line("static", indent + 4)
+        result += line(node.tipo_retorno, indent + 4)
+        result += line(node.nombre, indent + 4)
+        result += line("(", indent + 4)
+        result += line("<parametros>", indent + 4)
+        for tipo, ident in node.parametros:
+            result += line(tipo + " " + ident, indent + 8)
+        result += line(")", indent + 4)
+        # Imprime directamente el bloque de la función
+        result += ast_to_str(node.cuerpo, indent + 4)
+        return result
+
+    elif isinstance(node, Print):
+        # Regla: expresion : FUNCION_PRINTLN IPARENTESIS expresion DPARENTESIS
+        result += line("<print>", indent)
+        result += line("System.out.println", indent + 4)
+        result += line("(", indent + 4)
+        result += line("<expresion>", indent + 4)
+        result += ast_to_str(node.value, indent + 8)
+        result += line(")", indent + 4)
+        return result
+
     elif isinstance(node, BinOp):
-        print(indent)
-        result += ' ' * indent + prefix + "<BinOp>\n"
-        result += ' ' * (indent + 8) + "└── <expresion>\n"
-        result += ast_to_str(node.left, indent + 8, True, "    └── ")
-        result += ' ' * (indent + 4) + "└── " + node.op + "\n"
-        result += ' ' * (indent + 4) + "└── <expresion>\n"
-        result += ast_to_str(node.right, indent + 8, True, "    └── ")
+        # Regla: expresion : expresion OP expresion
+        result += line("<BinOp>", indent)
+        result += line("<expresion>", indent + 4)
+        result += ast_to_str(node.left, indent + 8)
+        result += line(node.op, indent + 4)
+        result += line("<expresion>", indent + 4)
+        result += ast_to_str(node.right, indent + 8)
+        return result
 
     elif isinstance(node, UnaryOp):
-        result += ' ' * indent + prefix + f"<UnaryOp>\n"
-        result += ' ' * (indent + 4) + "└──" + node.op  +"\n"
-        result += ' ' * (indent + 4) + "└── <expresion>\n"
-        result += ast_to_str(node.expr, indent + 8, True, "    └── ")
-    elif isinstance(node, Assignment):
-        result += ' ' * indent + prefix + f"<Asignación>\n"
-        result += ' ' * (indent + 4) + "└── " + node.name.name + "\n"
-        result += ' ' * (indent + 4) + "└── =\n"
-        result += ' ' * (indent + 4) + "└── <expresion>\n"
-        result += ast_to_str(node.value, indent + 8, True, "    └── ")
-        result += ' ' * (indent + 4) + "└── ;\n"
-    elif isinstance(node, Literal):
-        result += ' ' * indent + prefix + f"{node.value}\n"
-    elif isinstance(node, Identifier):
-        result += ' ' * indent + prefix + f"{node.name}\n"
+        # Regla: expresion : MENOS expresion %prec UMENOS
+        result += line("<unaria>", indent)
+        result += line(node.op, indent + 4)
+        result += line("<expresion>", indent + 4)
+        result += ast_to_str(node.expr, indent + 8)
+        return result
+
     elif isinstance(node, Increment):
-        result += ' ' * indent + prefix + f"<Incremento {'pre' if node.is_pre else 'post'}fijo>:\n"
+        # Incremento prefijo o postfijo
         if node.is_pre:
-            result += ' ' * (indent + 4) + "└── ++\n"
-        result += ' ' * (indent + 4) + "└── " + node.identifier.name + "\n"
-        if not node.is_pre:
-            result += ' ' * (indent + 4) + "└── ++\n"
+            result += line("<incremento_prefijo>", indent)
+            result += line("INCREMENTO", indent + 4)
+            result += line(node.identifier.name, indent + 4)
+        else:
+            result += line("<incremento_postfijo>", indent)
+            result += line(node.identifier.name, indent + 4)
+            result += line("INCREMENTO", indent + 4)
+        return result
+
     elif isinstance(node, Decrement):
-        result += ' ' * indent + prefix + f"<Decremento {'pre' if node.is_pre else 'post'}fijo>:\n"
+        # Decremento prefijo o postfijo
         if node.is_pre:
-            result += ' ' * (indent + 4) + "└── --\n"
-        result += ' ' * (indent + 4) + "└── " + node.identifier.name + "\n"
-        if not node.is_pre:
-            result += ' ' * (indent + 4) + "└── --\n"
-    elif isinstance(node, Print):
-        result += ' ' * indent + prefix + "Print\n"
-        result += ast_to_str(node.value, indent + 4, True, "└── ")
-    elif isinstance(node, IfStatement):
-        result += ' ' * indent + prefix + "IfStatement\n"
-        result += ' ' * (indent + 4) + "├── Condición\n"
-        result += ast_to_str(node.condition, indent + 8, False, "│   └── ")
-        result += ' ' * (indent + 4) + "├── Then\n"
-        result += ast_to_str(node.then_block, indent + 8, node.else_block is None, "│   └── ")
-        if node.else_block:
-            result += ' ' * (indent + 4) + "└── Else\n"
-            result += ast_to_str(node.else_block, indent + 8, True, "    └── ")
-    elif isinstance(node, ForStatement):
-        result += ' ' * indent + prefix + "ForStatement\n"
-        result += ' ' * (indent + 4) + "├── ForArgument\n"
-        result += ' ' * (indent + 8) + f"├── Iterador: {node.iterator}\n"
-        result += ' ' * (indent + 8) + f"├── Tipo: {node.type}\n"
-        result += ' ' * (indent + 8) + f"└── Iterable: {node.iterable}\n"
-        result += ' ' * (indent + 4) + "└── ForBlock\n"
-        result += ast_to_str(node.block, indent + 8, True, "    └── ")
-    elif isinstance(node, WhileStatement):
-        result += ' ' * indent + prefix + "WhileStatement\n"
-        result += ' ' * (indent + 4) + "├── Condición\n"
-        result += ast_to_str(node.condition, indent + 8, False, "│   └── ")
-        result += ' ' * (indent + 4) + "└── Then\n"
-        result += ast_to_str(node.block, indent + 8, True, "    └── ")
-    elif isinstance(node, ReturnStatement):
-        result += ' ' * indent + prefix + "ReturnStatement\n"
-        result += ast_to_str(node.value, indent + 4, True, "└── ")
-    elif isinstance(node, FunctionDeclaration):
-        result += ' ' * indent + prefix + "FunctionDeclaration\n"
-        result += ' ' * (indent + 4) + f"├── Modificador: {node.modificador_acceso or 'Ninguno'}\n"
-        result += ' ' * (indent + 4) + f"├── Static: {'Sí' if node.static else 'No'}\n"
-        result += ' ' * (indent + 4) + f"├── Tipo Retorno: {node.tipo_retorno}\n"
-        result += ' ' * (indent + 4) + f"├── Nombre: {node.nombre}\n"
-        result += ' ' * (indent + 4) + "├── Parámetros\n"
-        for tipo, nombre in node.parametros:
-            result += ' ' * (indent + 8) + f"├── {tipo} {nombre}\n"
-        result += ' ' * (indent + 4) + "└── Cuerpo\n"
-        result += ast_to_str(node.cuerpo, indent + 8, True, "    └── ")
-    elif isinstance(node, Block):
-        result += ' ' * indent + prefix + "Block\n"
-        for i, stmt in enumerate(node.statements):
-            result += ast_to_str(stmt, indent + 4, i == len(node.statements) - 1, "└── ")
+            result += line("<decremento_prefijo>", indent)
+            result += line("DECREMENTO", indent + 4)
+            result += line(node.identifier.name, indent + 4)
+        else:
+            result += line("<decremento_postfijo>", indent)
+            result += line(node.identifier.name, indent + 4)
+            result += line("DECREMENTO", indent + 4)
+        return result
+
     elif isinstance(node, FunctionCall):
-        result += ' ' * indent + prefix + "FunctionCall\n"
-        result += ' ' * (indent + 4) + f"├── Nombre: {node.name}\n"
-        result += ' ' * (indent + 4) + "└── Argumentos\n"
+        # Regla: expresion : IDENTIFICADOR IPARENTESIS argumentos DPARENTESIS
+        result += line("<function_call>", indent)
+        result += line(node.name, indent + 4)
+        result += line("(", indent + 4)
+        result += line("<argumentos>", indent + 4)
         for arg in node.arguments:
-            result += ast_to_str(arg, indent + 8, arg == node.arguments[-1], "    └── ")
-    return result
+            result += ast_to_str(arg, indent + 8)
+        result += line(")", indent + 4)
+        return result
+
+    elif isinstance(node, Block):
+        # Regla: sentencia_block : ILLAVE statements DLLAVE
+        result += line("<block>", indent)
+        for stmt in node.statements:
+            result += ast_to_str(stmt, indent + 4)
+        return result
+
+    elif isinstance(node, Literal):
+        # Nodo terminal: Literal
+        result += line(str(node.value), indent)
+        return result
+
+    elif isinstance(node, Identifier):
+        # Nodo terminal: Identificador
+        result += line(node.name, indent)
+        return result
+
+    else:
+        return result
 
 
-# Prueba
-data = """
-int x = 3 / 5;
-6+3;
 
-"""
-print(test_parser(data))
+
+

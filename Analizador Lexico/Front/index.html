@@ -25,7 +25,7 @@
                 <span class="main__language">Python</span>
             </div>
             <div>
-                <select class="main__container-language" style="cursor: pointer;">
+                <select id="opcion" class="main__container-language" style="cursor: pointer;">
                     <option value="analisis_lexico">Análisis Léxico</option>
                     <option value="analisis_sintactico">Análisis Sintáctico </option>
                     <option value="analisis_semanticco">Análisis Semántico</option>
@@ -47,7 +47,7 @@
             <div class="main__editor">
 
                     <textarea class="main__editor-textarea" placeholder="Escribe tu codigo aqui o adjunta tu archivo"></textarea>
-                    <input class="input__file" type="file" id="fileInput" accept=".py" onchange="handleFileUpload(event)">
+                    <input class="input__file" type="file" id="fileInput" accept=".java" onchange="handleFileUpload(event)">
                 
             </div>
             <div class="main__result" id="resizable">
