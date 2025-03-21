@@ -317,7 +317,7 @@ def p_error(p):
         # Calcula la columna relativa a la línea actual
         line_start = p.lexer.lexdata.rfind('\n', 0, p.lexpos) + 1
         column = (p.lexpos - line_start) + 1  # Ajusta para que comience en 1
-        errores_sintacticos += f"Error de sintaxis en '{p.value}' (Línea {p.lineno}, Columna {column})\n"
+        errores_sintacticos += f"Error de sintaxis en \"{p.value}\" (Linea {p.lineno}, Columna {column})\n"
     else:
         errores_sintacticos += "Error de sintaxis: estructura incompleta\n"
 
