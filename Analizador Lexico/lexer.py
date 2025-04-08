@@ -48,9 +48,9 @@ reservadas = {
 
 # Definición de tokens
 tokens = [
-    'FUNCION_MAIN' ,'FUNCION_PRINTLN', 'MAS', 'MENOS', 'POR', 'DIVISION', 'NUMERO', 'DECIMAL', 'IDENTIFICADOR', 'IGUALDAD', 'IGUAL',
+    'MAYOR_IGUAL', 'MENOR_IGUAL','FUNCION_MAIN' ,'FUNCION_PRINTLN', 'MAS', 'MENOS', 'POR', 'DIVISION', 'NUMERO', 'DECIMAL', 'IDENTIFICADOR', 'IGUALDAD', 'IGUAL',
     'IPARENTESIS', 'DPARENTESIS', 'ICORCHETE', 'DCORCHETE',
-    'ILLAVE', 'DLLAVE', 'MENOR', 'MAYOR', 'DIFERENTE', 'MENOR_IGUAL', 'MAYOR_IGUAL',
+    'ILLAVE', 'DLLAVE', 'MENOR', 'MAYOR', 'DIFERENTE',
     'MAS_IGUAL', 'MENOS_IGUAL', 'POR_IGUAL', 'DIVISION_IGUAL', 'MODULO', 'MODULO_IGUAL', 'AND', 'OR',
     'PUNTOYCOMA', 'COMENTARIO', 'CADENA', 'PUNTO', 'DOSPUNTOS' ,'INCREMENTO', 'DECREMENTO', 'COMA'
 ] + list(set(reservadas.values()))
@@ -71,6 +71,8 @@ def t_FUNCION_PRINTLN(t):
     return t
 
 # Expresiones regulares para tokens simples
+t_MENOR_IGUAL = r'<='
+t_MAYOR_IGUAL = r'>='
 t_MAS = r'\+'
 t_MENOS = r'-'
 t_POR = r'\*'
@@ -80,8 +82,7 @@ t_MAYOR = r'\>'
 t_IGUALDAD = r'=='
 t_IGUAL = r'\='
 t_DIFERENTE = r'!='
-t_MENOR_IGUAL = r'<='
-t_MAYOR_IGUAL = r'>='
+
 t_MAS_IGUAL = r'\+='
 t_MENOS_IGUAL = r'-='
 t_POR_IGUAL = r'\*='
