@@ -30,7 +30,7 @@ reservadas = {
     'abstract': 'PALABRA_RESERVADA',
     'synchronized': 'PALABRA_RESERVADA',
     'volatile': 'PALABRA_RESERVADA',
-    'class': 'PALABRA_RESERVADA',
+    'class': 'CLASS',
     'void': 'VOID',
     'args': 'PALABRA_RESERVADA',
     'char': 'PALABRA_RESERVADA',
@@ -48,7 +48,7 @@ reservadas = {
 
 # Definición de tokens
 tokens = [
-    'FUNCION_PRINTLN', 'MAS', 'MENOS', 'POR', 'DIVISION', 'NUMERO', 'DECIMAL', 'IDENTIFICADOR', 'IGUALDAD', 'IGUAL',
+    'FUNCION_MAIN' ,'FUNCION_PRINTLN', 'MAS', 'MENOS', 'POR', 'DIVISION', 'NUMERO', 'DECIMAL', 'IDENTIFICADOR', 'IGUALDAD', 'IGUAL',
     'IPARENTESIS', 'DPARENTESIS', 'ICORCHETE', 'DCORCHETE',
     'ILLAVE', 'DLLAVE', 'MENOR', 'MAYOR', 'DIFERENTE', 'MENOR_IGUAL', 'MAYOR_IGUAL',
     'MAS_IGUAL', 'MENOS_IGUAL', 'POR_IGUAL', 'DIVISION_IGUAL', 'MODULO', 'MODULO_IGUAL', 'AND', 'OR',
@@ -59,6 +59,11 @@ tokens = [
 def t_DECIMAL(t):
     r'\d+\.\d+'
     t.value = float(t.value)
+    return t
+
+def t_FUNCION_MAIN(t):
+    r'FUNCION_MAIN_ESPECIAL'
+    t.value = "public static void main(String[] args)"
     return t
 
 def t_FUNCION_PRINTLN(t):
@@ -139,7 +144,11 @@ lexer_sintactico = lex.lex()
 # Función para probar el analizador
 def test_lexer(data):
     lexer = lex.lex()
-    lexer.input(data)
+    data2 = data.replace("public static void main(String[] args)", "FUNCION_MAIN_ESPECIAL")  # Reemplazar la palabra "public static void main(String[] args)"
+    
+    print(data2)
+    lexer.input(data2)
+    
     global mensaje
     global errores
     mensaje = ""

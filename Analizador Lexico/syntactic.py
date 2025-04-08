@@ -24,7 +24,9 @@ class Block(Statement):
         self.statements = statements
 
 class VariableDeclaration(Statement):
-    def __init__(self, var_type, name, value):
+    def __init__(self, access_modifier , static ,var_type, name, value):
+        self.access_modifier = access_modifier  
+        self.static = static
         self.var_type = var_type
         self.name = name
         self.value = value
@@ -64,6 +66,16 @@ class FunctionDeclaration(Statement):
         self.nombre = nombre  
         self.parametros = parametros  
         self.cuerpo = cuerpo  
+
+class FunctionDeclarationMain(Statement):
+    def __init__(self, declaracion, cuerpo):
+        self.declaracion = declaracion
+        self.cuerpo = cuerpo
+class ClassDeclaration(Statement):
+    def __init__(self, access_modifier, name, body):
+        self.access_modifier = access_modifier
+        self.name = name
+        self.body = body
 
 # Clases para las expresiones
 
@@ -151,11 +163,17 @@ def p_sentencia(p):
                 | sentencia_for
                 | sentencia_while
                 | sentencia_funcion_declaracion
+                | sentencia_clase_declaracion
+                | sentencia_funcion_declaracion_main
                 | return'''  # Sentencia vacía (;)
     p[0] = p[1]
 
 def p_sentencia_block(p):
     'sentencia_block : ILLAVE statements DLLAVE'
+    p[0] = Block(p[2])  # Block es una clase del AST para agrupar sentencias
+
+def p_sentencia_block_class(p):
+    'sentencia_block_class : ILLAVE statements DLLAVE'
     p[0] = Block(p[2])  # Block es una clase del AST para agrupar sentencias
 
 def p_statements(p):
@@ -166,9 +184,31 @@ def p_statements(p):
     else:
         p[0] = [p[1]]
 
+
+""" def p_line_or_empty(p):
+    '''line_or_empty : line line_or_empty
+                    | empty'''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = []
+
+def p_statements_class(p):
+    'statements_class : line_or_empty sentencia_funcion_declaracion_main line_or_empty'
+    p[0] = p[1] + [p[2]] + p[3] """
+
+
 def p_declaracion(p):
-    'declaracion : TIPO_DATO IDENTIFICADOR IGUAL expresion PUNTOYCOMA'
-    p[0] = VariableDeclaration(p[1], Identifier(p[2]), p[4])
+    '''declaracion : modificador_acceso static tipo_dato IDENTIFICADOR IGUAL expresion PUNTOYCOMA
+                    | modificador_acceso static tipo_dato IDENTIFICADOR PUNTOYCOMA'''
+    if len(p) == 8:
+        p[0] = VariableDeclaration(p[1], p[2], p[3], Identifier(p[4]), p[6])
+    else:
+        # Declaración sin inicialización
+        # Se crea una VariableDeclaration sin valor
+        # Se asume que el valor es None o vacío
+        # Esto puede ser ajustado según la lógica del lenguaje
+        p[0] = VariableDeclaration(p[1], p[2], p[3], Identifier(p[4]), None)
 
 def p_asignacion(p):
     'sentencia : IDENTIFICADOR IGUAL expresion PUNTOYCOMA'
@@ -227,7 +267,13 @@ def p_sentencia_funcion_declaracion(p):
     'sentencia_funcion_declaracion : modificador_acceso static tipo_dato IDENTIFICADOR IPARENTESIS parametros DPARENTESIS sentencia_block'
     p[0] = FunctionDeclaration(p[1], p[2], p[3], p[4], p[6], p[8])
 
+def p_sentencia_funcion_declaracion_main(p):
+    'sentencia_funcion_declaracion_main : FUNCION_MAIN sentencia_block'
+    p[0] = FunctionDeclarationMain(p[1], p[2])
 
+def p_sentencia_clase_declaracion(p):
+    'sentencia_clase_declaracion : modificador_acceso CLASS IDENTIFICADOR sentencia_block_class'
+    p[0] = ClassDeclaration(p[1], p[3], p[4])
 
 # Reglas para expresiones
 
@@ -332,8 +378,9 @@ parser = yacc.yacc(start='program')
 def test_parser(data):
     global errores_sintacticos
     errores_sintacticos = ""
-    lexer_sintactico.input(data)
-    result = parser.parse(data, lexer=lexer_sintactico)
+    data2 = data.replace("public static void main(String[] args)", "FUNCION_MAIN_ESPECIAL")  # Reemplazar la palabra "public static void main(String[] args)"
+    lexer_sintactico.input(data2)
+    result = parser.parse(data2, lexer=lexer_sintactico)
     
     if errores_sintacticos:
         return f"Errores:\n{errores_sintacticos}"
@@ -440,6 +487,33 @@ def ast_to_str(node, indent=0):
         result += line(")", indent + 4)
         # Imprime directamente el bloque de la función
         result += ast_to_str(node.cuerpo, indent + 4)
+        return result
+
+    elif isinstance(node, FunctionDeclarationMain):
+        # Regla: sentencia_funcion_declaracion_main : FUNCION_MAIN sentencia_block
+        result += line("<sentencia_funcion_declaracion_main>", indent)
+        #public static void main(String[] args) 
+        result += line("public", indent + 4)
+        result += line("static", indent + 4)
+        result += line("void", indent + 4)
+        result += line("main", indent + 4)
+        result += line("(", indent + 4)
+        result += line("String[]", indent + 4)
+        result += line("args", indent + 4)
+        result += line(")", indent + 4)
+        # Imprime directamente el bloque de la función
+        result += ast_to_str(node.cuerpo, indent + 4)
+        return result
+
+    elif isinstance(node, ClassDeclaration):
+        # Regla: sentencia_clase_declaracion : modificador_acceso CLASS IDENTIFICADOR sentencia_block
+        result += line("<sentencia_clase_declaracion>", indent)
+        if node.access_modifier:
+            result += line(node.access_modifier, indent + 4)
+        result += line("class", indent + 4)
+        result += line(node.name, indent + 4)
+        # Imprime directamente el bloque de la clase
+        result += ast_to_str(node.body, indent + 4)
         return result
 
     elif isinstance(node, Print):
