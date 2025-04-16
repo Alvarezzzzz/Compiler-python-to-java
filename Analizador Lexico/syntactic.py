@@ -286,6 +286,9 @@ def test_parser(data):
                 mensaje += f"{error}\n"
         else:
             mensaje += "Análisis semántico exitoso\n"
+            from translator import translate_to_python
+            python_code = translate_to_python(result)
+            print(f"Codigo traducido a Python:\n{python_code}")
 
         return "Análisis sintáctico exitoso\nAST generado:\n" + ast_to_str(result) + mensaje + "\n" + semantic_analyzer.get_symbol_table()
 

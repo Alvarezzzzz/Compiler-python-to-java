@@ -157,7 +157,7 @@ class SemanticAnalyzer:
             self.symbol_table.add_symbol(param[1], param[0], 'variable', origin = node.nombre)
             lista_parametros.append({'name': param[1], 'type': param[0]})
         
-        self.symbol_table.params_functions[node.nombre+str(self.symbol_table.current_scope)] = lista_parametros
+        self.symbol_table.params_functions[node.nombre] = lista_parametros
         # Validar cuerpo
         self.visit(node.cuerpo)
         self.symbol_table.exit_scope()
@@ -173,14 +173,17 @@ class SemanticAnalyzer:
             return
     
     # Verificar número de argumentos
-        if len(node.arguments) != func_info['params']:
+        if len(node.arguments) != func_info['params'] and node.arguments != [None]:
             self.errors.append(f"Número incorrecto de argumentos en {node.name}")
     
     # Verificar tipos de argumentos
         if len(node.arguments) == func_info['params']:
             for i in range(len(node.arguments)):
+                if node.arguments[i] is None:
+                    break
                 arg_type = self.get_expr_type(node.arguments[i])
-                param_type = self.symbol_table.params_functions[ node.name+str(self.symbol_table.current_scope)][i]['type']
+
+                param_type = self.symbol_table.params_functions[ node.name][i]['type']
                 if arg_type != param_type:
                     self.errors.append(f"Tipo de argumento incorrecto en {node.name}: se esperaba {param_type}, se recibió {arg_type}")
     # ... Agregar métodos para otros nodos (IfStatement, ForStatement, etc.) ...
