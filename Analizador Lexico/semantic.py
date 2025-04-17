@@ -188,6 +188,7 @@ class SemanticAnalyzer:
                     self.errors.append(f"Tipo de argumento incorrecto en {node.name}: se esperaba {param_type}, se recibió {arg_type}")
     # ... Agregar métodos para otros nodos (IfStatement, ForStatement, etc.) ...
 
+
     def visit_Literal(self, node):
         # Retornar el tipo del literal
         return node.type

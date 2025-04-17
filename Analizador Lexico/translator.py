@@ -32,6 +32,12 @@ class PythonCodeGenerator:
         if node.value:
             value_code = self._get_expression_code(node.value)
             self.output.append(f"{self.indent}{node.name.name} = {value_code}")
+        else:
+            self.output.append(f"{self.indent}{node.name.name} = None")
+    
+    def visit_Assignment(self, node):
+        value_code = self._get_expression_code(node.value)
+        self.output.append(f"{self.indent}{node.name.name} = {value_code}")
 
     def visit_FunctionDeclaration(self, node):
         params = ', '.join([p[1] for p in node.parametros])
@@ -85,14 +91,29 @@ class PythonCodeGenerator:
                 # Traducir otros métodos como funciones globales
                 self.visit(stmt)
 
+    def isOtherIfStatement(self, node, IfStatement):
+        if node and isinstance(node,IfStatement):
+            condition = self._get_expression_code(node.condition)
+            self.output.append(f"{self.indent}elif {condition}:")
+            self.indent_level += 1
+            self.visit(node.then_block)
+            self.indent_level -= 1
+            if node.else_block and isinstance(node.else_block, IfStatement):
+                self.isOtherIfStatement(node.else_block, IfStatement)
+            elif node.else_block:
+                self.output.append(f"{self.indent}else:")
+                self.indent_level += 1
+                self.visit(node.else_block)
+                self.indent_level -= 1
+
     def visit_IfStatement(self, node):
         condition = self._get_expression_code(node.condition)
         self.output.append(f"{self.indent}if {condition}:")
         self.indent_level += 1
         self.visit(node.then_block)
         self.indent_level -= 1
-        
-        if node.else_block:
+        self.isOtherIfStatement(node.else_block, IfStatement)
+        if node.else_block and not isinstance(node.else_block, IfStatement):
             self.output.append(f"{self.indent}else:")
             self.indent_level += 1
             self.visit(node.else_block)
@@ -121,7 +142,7 @@ class PythonCodeGenerator:
         left = self._get_expression_code(node.left)
         right = self._get_expression_code(node.right)
         op = self._translate_operator(node.op)
-        return f"{left} {op} {right}"
+        return f"({left} {op} {right})"
 
     def visit_Identifier(self, node):
         return node.name
@@ -129,6 +150,8 @@ class PythonCodeGenerator:
     def visit_Literal(self, node):
         if node.type == 'String':
             return f'{node.value}'
+        elif node.type == 'boolean':
+            return 'True' if node.value == "true" else 'False' 
         return str(node.value)
 
     def _get_expression_code(self, expr):
@@ -161,6 +184,18 @@ class PythonCodeGenerator:
     def visit_Block(self, node):
         for stmt in node.statements:
             self.visit(stmt)
+    
+    def visit_Increment(self, node):
+        if node.is_pre:
+            self.output.append(f"{self.indent}{node.identifier.name} += 1")
+        else:
+            self.output.append(f"{self.indent}{node.identifier.name} += 1")
+
+    def visit_Decrement(self, node):
+        if node.is_pre:
+            self.output.append(f"{self.indent}{node.identifier.name} -= 1")
+        else:
+            self.output.append(f"{self.indent}{node.identifier.name} -= 1")
 
 def translate_to_python(ast):
     generator = PythonCodeGenerator()

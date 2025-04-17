@@ -308,6 +308,10 @@ def ast_to_str(node, indent=0):
     elif isinstance(node, VariableDeclaration):
         # Regla: declaracion : TIPO_DATO IDENTIFICADOR IGUAL expresion PUNTOYCOMA
         result += line("<declaracion>", indent)
+        if node.access_modifier:
+            result += line(node.access_modifier, indent + 4)          # MODIFICADOR_ACCESO (terminal)
+        if node.static:
+            result += line("static", indent + 4)                     # Terminal "static"
         result += line(str(node.var_type), indent + 4)           # TIPO_DATO (terminal)
         result += line(node.name.name, indent + 4)                # IDENTIFICADOR (terminal)
         result += line("=", indent + 4)                           # Terminal "="
