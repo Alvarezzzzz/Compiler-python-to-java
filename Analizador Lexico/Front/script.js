@@ -29,6 +29,8 @@ function sendDataToPython() {
         window.pyqt.sendData(content);
     } else if (window.pyqt && opcion == 'analisis_sintactico') {
         window.pyqt.sendDataSintactico(content);
+    } else if (window.pyqt && opcion == 'compilador') {
+        window.pyqt.sendDataTranslator(content);
     }
     else {
         console.error("PyQt bridge is not available.");
@@ -54,6 +56,10 @@ function convertToHTML(data) {
 
 function handlePythonDataSintactico(data) {
     // Recibir los datos procesados por Python y mostrarlo en la interfaz
+    document.getElementsByClassName('main__result-container')[0].innerHTML = convertToHTML(data).slice(1, -1);
+}
+
+function handlePythonDataTranslator(data) {
     document.getElementsByClassName('main__result-container')[0].innerHTML = convertToHTML(data).slice(1, -1);
 }
 

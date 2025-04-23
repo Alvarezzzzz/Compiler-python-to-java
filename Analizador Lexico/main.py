@@ -47,6 +47,14 @@ class MyApp(QMainWindow):
 
         result = syntactic.test_parser(data)
         return result
+    
+    @pyqtSlot(str)
+    def on_receive_data_translator(self, data):
+        print(f"Data received from JS for translator: \n{data}")
+        # Realizamos alguna operación en Python (por ejemplo, procesar la cadena recibida)
+
+        result = syntactic.test_parser(data, True)
+        return result
 
     def resizeEvent(self, event):
         # Hacer que el contenido HTML se ajuste correctamente al tamaño de la ventana
@@ -81,6 +89,19 @@ class PyQtBridge(QObject):
 
         # Enviar datos procesados de vuelta a JS
         self.parent().browser.page().runJavaScript(f"handlePythonDataSintactico('{safe_result}')")
+    
+    @pyqtSlot(str)
+    def sendDataTranslator(self, data):
+        result = self.parent().on_receive_data_translator(data)
+        print("Aqui el resultado del traductor")
+        print(result)
+
+        safe_result = json.dumps(result)
+        print("Aqui el resultado del traductor con formato de js")
+        print(safe_result)
+
+        # Enviar datos procesados de vuelta a JS
+        self.parent().browser.page().runJavaScript(f"handlePythonDataTranslator('{safe_result}')")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

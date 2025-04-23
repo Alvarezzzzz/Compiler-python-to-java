@@ -264,8 +264,9 @@ parser = yacc.yacc(start='program')
 # --------------------------
 # Función de prueba
 # --------------------------
-def test_parser(data):
+def test_parser(data, translate=False):
     global errores_sintacticos
+    python_code = None
     errores_sintacticos = ""
     data2 = data.replace("public static void main(String[] args)", "FUNCION_MAIN_ESPECIAL")  # Reemplazar la palabra "public static void main(String[] args)"
     lexer_sintactico.input(data2)
@@ -290,7 +291,13 @@ def test_parser(data):
             python_code = translate_to_python(result)
             print(f"Codigo traducido a Python:\n{python_code}")
 
-        return "Análisis sintáctico exitoso\nAST generado:\n" + ast_to_str(result) + mensaje + "\n" + semantic_analyzer.get_symbol_table()
+        if translate:
+            if python_code:
+                return python_code
+            else:
+                return "Hay errores lexicos, semanticos o sintacticos, no se puede traducir el código."
+        else:
+            return "Análisis sintáctico exitoso\nAST generado:\n" + ast_to_str(result) + mensaje + "\n" + semantic_analyzer.get_symbol_table()
 
 def ast_to_str(node, indent=0):
     result = ""
